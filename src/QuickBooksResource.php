@@ -240,9 +240,41 @@ class QuickBooksResource
         $where  = ' WHERE ';
 
         $where .= collect($attributes)->map(function ($value, $key) {
+            if ($this->isAdvancedQuery($value)) {
+                return $this->buildAdvancedWhereString($value);
+            }
             return "$key = '" . addslashes($value) . "'";
         })->implode(' AND ');
 
         return $where;
+    }
+
+    /**
+     * Builds a where clause that allows for operators other than =
+     *
+     * @param array $value
+     * @param string $key
+     * @return string
+     */
+    protected function buildAdvancedWhereString($attributes)
+    {
+        $operators = ["=", "<=", "<", ">=", ">"];
+
+        [$table, $operator, $value] = $attributes;
+
+        if (! in_array($operator, $operators)) throw new \InvalidArgumentException("Invalid Operator");
+
+        return "$table $operator '". addslashes($value)."'";
+    }
+
+    /**
+     * Determine if the query attribute has operators
+     *
+     * @param array $attributes
+     * @return boolean
+     */
+    protected function isAdvancedQuery($attributes)
+    {
+        return count($attributes) === 3;
     }
 }
