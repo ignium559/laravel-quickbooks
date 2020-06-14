@@ -186,7 +186,7 @@ public function syncExample()
 You can use the included resource classes in `LifeOnScreen\LaravelQuickBooks\Resources` to create, update, and query resources from QuickBooks. 
 
 Examples:
-```
+```php
 $customer = new LifeOnScreen\LaravelQuickBooks\Resources\Customer;
 
 // create
@@ -207,8 +207,14 @@ $customer->find(123);
 // find by a specific field:
 $customer->findBy('FamilyName', 'Smith');
 
-// find multiple items:
+// find all items:
 $customer->query();
+
+// find items with where clauses (in this example WHERE Metadata.LastUpdatedTime = '2020-06-14')
+$customer->query(['Metadata.LastUpdatedTime' => '2020-06-14']);
+
+// find items with advanced where clauses (in this example WHERE Id > '4')
+$customer->query(['Id', '>', 4]);
 ```
 
 See `QuickBooksResource.php` for further documentation. 
